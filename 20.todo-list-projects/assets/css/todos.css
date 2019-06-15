@@ -1,10 +1,11 @@
+/* Styles the container for the To-Do list. */
 #container {
     width: 360px;
     margin: 0 auto;
     border: 2px solid gray;
 }
 
-/* Styles a completed To-Do */
+/* Styles a completed To-Do. */
 .completed {
     color: gray;
     text-decoration: line-through;
