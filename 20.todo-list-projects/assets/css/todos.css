@@ -16,12 +16,22 @@ ul {
     padding: 0;
 }
 
+/* Styles the body. */
+body {
+    font-family: 'Roboto';
+}
+
 /* Styles the To-Do elements. */
 li {
     background: #fff;
     height: 40px;
     line-height: 40px;
     color: #666;
+}
+
+/* Creates alternativing light and dark list pattern. */
+li:nth-child(even) {
+    background: #f7f7f7;
 }
 
 /* Styles the text bar when focused. */

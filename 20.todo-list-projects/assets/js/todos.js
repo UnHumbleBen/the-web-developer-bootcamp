@@ -17,8 +17,8 @@ $("ul").on("click", "span", function (event) {
 $("input[type='text']").keypress(function (event) {
     if (event.which === 13) {
         // When Enter key is pressed, empties the text bar and append to list.
-        $(this).val("");
         var todoStr = $(this).val();
         $("ul").append("<li><span>X</span> " + todoStr + "</li>");
+        $(this).val("");
     }
 });
