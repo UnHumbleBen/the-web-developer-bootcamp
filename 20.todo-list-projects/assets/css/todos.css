@@ -9,6 +9,11 @@ h1 {
     font-weight: normal;
 }
 
+/* Floats the plus button to the right. */
+.fa-plus {
+    float: right;
+}
+
 /* Styles the list of tasks. */
 ul {
     list-style: none;
@@ -18,7 +23,9 @@ ul {
 
 /* Styles the body. */
 body {
-    font-family: 'Roboto';
+    background: #22c1c3;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #fdbb2d, #22c1c3);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #fdbb2d, #22c1c3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 /* Styles the To-Do elements. */
@@ -32,6 +39,28 @@ li {
 /* Creates alternativing light and dark list pattern. */
 li:nth-child(even) {
     background: #f7f7f7;
+}
+
+/* Styles the trash icons. */
+span {
+    /* General styling for trash icons. */
+    background: #ec7c3c;
+    height: 40px;
+    margin-right: 20px;
+    text-align: center;
+    color: white;
+
+    /* Hides trash icons. */
+    display: inline-block;
+    width: 0;
+    transition: 0.2s linear;
+    opacity: 0;
+}
+
+/* Displays trash icons when To-Do element is hovered over. */
+li:hover span {
+    width: 40px;
+    opacity: 1;
 }
 
 /* Styles the text bar when focused. */
@@ -50,8 +79,9 @@ input {
     margin: 0;
     /* TODO(benlee12): add webkit */
     box-sizing: border-box;
+    /* Unfocused border is same size as focused border. */
+    border: 3px solid rgba(0, 0, 0, 0);
 }
-
 
 /* Styles the container for the To-Do list. */
 #container {
