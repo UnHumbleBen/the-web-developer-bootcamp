@@ -1,8 +1,54 @@
+/* Styles the To-Do list header. */
+h1 {
+    background: #2980b9;
+    color: white;
+    margin: 0;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    font-size: 24px;
+    font-weight: normal;
+}
+
+/* Styles the list of tasks. */
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Styles the To-Do elements. */
+li {
+    background: #fff;
+    height: 40px;
+    line-height: 40px;
+    color: #666;
+}
+
+/* Styles the text bar when focused. */
+input:focus {
+    background: #fff;
+    border: 3px solid #2980b9;
+    outline: none;
+}
+
+/* General styling for text bar. */
+input {
+    font-size: 18px;
+    background: #f7f7f7;
+    width: 100%;
+    padding: 13px 13px 13px 20px;
+    margin: 0;
+    /* TODO(benlee12): add webkit */
+    box-sizing: border-box;
+}
+
+
 /* Styles the container for the To-Do list. */
 #container {
     width: 360px;
-    margin: 0 auto;
-    border: 2px solid gray;
+    margin: 100px auto;
+    background: #f7f7f7;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Styles a completed To-Do. */
