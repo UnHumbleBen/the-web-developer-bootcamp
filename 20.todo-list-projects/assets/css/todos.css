@@ -1,3 +1,12 @@
+/* Styles the body. */
+body {
+    font-family: 'Roboto';
+    background: #22c1c3;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #fdbb2d, #22c1c3);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #fdbb2d, #22c1c3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+
 /* Styles the To-Do list header. */
 h1 {
     background: #2980b9;
@@ -9,36 +18,11 @@ h1 {
     font-weight: normal;
 }
 
-/* Floats the plus button to the right. */
-.fa-plus {
-    float: right;
-}
-
 /* Styles the list of tasks. */
 ul {
     list-style: none;
     margin: 0;
     padding: 0;
-}
-
-/* Styles the body. */
-body {
-    background: #22c1c3;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #fdbb2d, #22c1c3);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #fdbb2d, #22c1c3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-}
-
-/* Styles the To-Do elements. */
-li {
-    background: #fff;
-    height: 40px;
-    line-height: 40px;
-    color: #666;
-}
-
-/* Creates alternativing light and dark list pattern. */
-li:nth-child(even) {
-    background: #f7f7f7;
 }
 
 /* Styles the trash icons. */
@@ -57,19 +41,6 @@ span {
     opacity: 0;
 }
 
-/* Displays trash icons when To-Do element is hovered over. */
-li:hover span {
-    width: 40px;
-    opacity: 1;
-}
-
-/* Styles the text bar when focused. */
-input:focus {
-    background: #fff;
-    border: 3px solid #2980b9;
-    outline: none;
-}
-
 /* General styling for text bar. */
 input {
     font-size: 18px;
@@ -83,16 +54,49 @@ input {
     border: 3px solid rgba(0, 0, 0, 0);
 }
 
+/* Styles the To-Do elements. */
+li {
+    background: #fff;
+    height: 40px;
+    line-height: 40px;
+    color: #666;
+}
+
+/* Creates alternativing light and dark list pattern. */
+li:nth-child(even) {
+    background: #f7f7f7;
+}
+
+
+/* Displays trash icons when To-Do element is hovered over. */
+li:hover span {
+    width: 40px;
+    opacity: 1;
+}
+
+/* Styles the text bar when focused. */
+input:focus {
+    background: #fff;
+    border: 3px solid #2980b9;
+    outline: none;
+}
+
+/* Floats the plus button to the right. */
+.fa-plus {
+    float: right;
+}
+
+
+/* Styles a completed To-Do. */
+.completed {
+    color: gray;
+    text-decoration: line-through;
+}
+
 /* Styles the container for the To-Do list. */
 #container {
     width: 360px;
     margin: 100px auto;
     background: #f7f7f7;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Styles a completed To-Do. */
-.completed {
-    color: gray;
-    text-decoration: line-through;
 }

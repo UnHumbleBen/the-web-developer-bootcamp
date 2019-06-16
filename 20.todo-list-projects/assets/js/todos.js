@@ -22,3 +22,7 @@ $("input[type='text']").keypress(function (event) {
         $(this).val("");
     }
 });
+
+$(".fa-plus").click(function () {
+    $("input[type='text']").fadeToggle();
+});
