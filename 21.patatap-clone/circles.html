@@ -8,16 +8,12 @@
     <title>Circles</title>
     <script src="paper-full.js"></script>
     <script type="text/paperscript" canvas="myCanvas">
-        var NUM_ROWS = 10, NUM_COLS = 10, SIZE = 10, SEPERATION = 100;
-        var row, col;
-        for (row = 0; row < NUM_ROWS; row++) {
-            var y = row * SEPERATION;
-            for (col = 0; col < NUM_COLS; col++) {
-                var x = col * SEPERATION;
-                var color_sum = (row + col) / (NUM_ROWS + NUM_COLS);
-                new Path.Circle(new Point(x, y), SIZE).fillColor = new Color(1 - color_sum, 1 - color_sum, color_sum);
-            }
-        }
+    // Creates random circle when a key is pressed.
+    function onKeyDown(event) {
+        var maxPoint = new Point(view.size.width, view.size.height);
+        var point = maxPoint * Point.random();
+        new Path.Circle(point, 10).fillColor = "orange";
+    }
     </script>
     <link rel="stylesheet" href="circles.css">
 </head>
