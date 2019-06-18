@@ -5,3 +5,7 @@
   * It's popular!
   * Javascript
 * (it doesn't matter)
+
+#Using Node
+* Interact with Node Console
+* Run a file with node
