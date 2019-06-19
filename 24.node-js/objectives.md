@@ -9,3 +9,8 @@
 #Using Node
 * Interact with Node Console
 * Run a file with node
+
+#Intro to NPM
+* Define NPM
+* Explain why NPM is awesome
+* Intro the packages we will end up using
