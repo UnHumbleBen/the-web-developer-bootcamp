@@ -2,15 +2,20 @@ const express = require('express');
 
 const app = express();
 
+// Specifies the public/ to be the directory from which to serve static assets.
+app.use(express.static('public'));
+// Sets the view engine to allow ommission of extension of view files.
+app.set('view engine', 'ejs');
+
 // Handles requests to the home page.
 app.get('/', (_req, res) => {
-  res.render('home.ejs');
+  res.render('home');
 });
 
 // Handles requests to /fallinlovewith.
 app.get('/fallinlovewith/:thing', (req, res) => {
   const { thing } = req.params;
-  res.render('love.ejs', { thingVar: thing });
+  res.render('love', { thingVar: thing });
 });
 
 app.get('/posts', (_req, res) => {
@@ -20,7 +25,7 @@ app.get('/posts', (_req, res) => {
     { title: 'Can you believe this pomsky?', author: 'Colt' },
   ];
 
-  res.render('posts.ejs', { posts });
+  res.render('posts', { posts });
 });
 
 app.listen(process.env.PORT, process.env.IP, () => {
