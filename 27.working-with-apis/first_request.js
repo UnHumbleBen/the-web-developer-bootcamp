@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
-const request = require('request');
+const rp = require('request-promise');
 
-request('https://www.reddit.lksadjf;ldsajfcom', (error, response, body) => {
-  if (error) {
-    console.log('Something went wrong!');
-    console.log(error);
-  } else if (response.statusCode === 200) {
-    console.log(body);
-  }
-});
+
+rp('http://jsonplaceholder.typicode.com/users/1')
+  .then((body) => {
+    const parsedData = JSON.parse(body);
+    console.log(`${parsedData.name} lives in ${parsedData.address.city}.`);
+  })
+  .catch((err) => {
+    console.log('Error!', err);
+  });
