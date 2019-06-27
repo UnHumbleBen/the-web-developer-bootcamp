@@ -12,3 +12,5 @@ Similar to HTML
 #### Javascript Object Notation
 Looks like JavaScript objects
 * Note: we need quotes around the keys, so not exactly javascript objects
+
+## Use JSONViewer to view API responses more easily!
