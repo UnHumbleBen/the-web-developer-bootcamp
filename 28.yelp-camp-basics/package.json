@@ -1,0 +1,29 @@
+{
+  "name": "28.yelp-camp-basics",
+  "version": "1.0.0",
+  "description": "YelpCamp",
+  "main": "app.js",
+  "scripts": {
+    "test": "PORT=8000 nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UnHumbleBen/the-web-developer-bootcamp/tree/master/28.yelp-camp-basics"
+  },
+  "keywords": [
+    "Yelp",
+    "Camp"
+  ],
+  "author": "Benjamin L Lee",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.2",
+    "ejs-lint": "^0.3.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.18.0"
+  }
+}
