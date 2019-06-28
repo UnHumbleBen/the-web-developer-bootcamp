@@ -1,0 +1,32 @@
+{
+  "name": "movie_search_app",
+  "version": "1.0.0",
+  "description": "A simple app that uses Movie API to search for movies",
+  "main": "app.js",
+  "scripts": {
+    "test": "PORT=8000 nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UnHumbleBen/the-web-developer-bootcamp.git"
+  },
+  "keywords": [
+    "api"
+  ],
+  "author": "Benjamin L Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UnHumbleBen/the-web-developer-bootcamp/issues"
+  },
+  "homepage": "https://github.com/UnHumbleBen/the-web-developer-bootcamp#readme",
+  "dependencies": {
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.18.0"
+  }
+}
