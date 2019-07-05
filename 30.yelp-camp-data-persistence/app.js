@@ -8,9 +8,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 // Avoids URL string parser DeprecationWarning.
-mongoose.set('useNewUrlParser', true);
 // Connect to the database. (Remember to run ./mongod to start up the database).
-mongoose.connect('mongodb://localhost/yelp_camp');
+mongoose.connect('mongodb://localhost:27017/yelp_camp', { useNewUrlParser: true });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -21,6 +20,7 @@ app.set('view engine', 'ejs');
 const campgroundSchema = new mongoose.Schema({
   name: String,
   image: String,
+  description: String,
 });
 
 const Campground = mongoose.model('Campground', campgroundSchema);
@@ -28,12 +28,13 @@ const Campground = mongoose.model('Campground', campgroundSchema);
 // Campground.create(
 //   {
 //     name: 'Granite Creek',
-//     image: 'https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwjLwZDTrJzjAhXLrVQKHc7fCtoQjRx6BAgBEAU&url=https%3A%2F%2Funsplash.com%2Fsearch%2Fphotos%2Fcamping&psig=AOvVaw0ENum51jvA307I6Im6v_l7&ust=1562366968792379',
+//     image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
+//     description: 'This is a huge granite hill, no bathrooms. No water. Beautiful granite',
 //   }, (err, campground) => {
 //     if (err) {
 //       console.log(err);
 //     } else {
-//       console.log('NEWLY CREATED CAMPGROUND: ');
+//       console.log('Created new campground: ');
 //       console.log(campground);
 //     }
 //   },
@@ -44,25 +45,27 @@ app.get('/', (req, res) => {
   res.render('landing');
 });
 
-// Renders the campground page.
+// Renders the campground page (INDEX route).
 app.get('/campgrounds', (req, res) => {
   // Get all campgrounds from DB
   Campground.find({}, (err, allCampgrounds) => {
     if (err) {
       console.log(err);
     } else {
-      res.render('campgrounds', { campgrounds: allCampgrounds });
+      res.render('index', { campgrounds: allCampgrounds });
     }
   });
   // res.render('campgrounds', { campgrounds });
 });
 
-// Gets data from form and add it to campgrounds array.
+// (CREATE route).
+// Gets data from form and add it to campgrounds database.
 // Redirects back to campgrounds page.
 app.post('/campgrounds', (req, res) => {
   const { name } = req.body;
   const { image } = req.body;
-  const newCampground = { name, image };
+  const { description } = req.body;
+  const newCampground = { name, image, description };
   // Create a new campground and save it to DB
   Campground.create(newCampground, (err, newlyCreated) => {
     if (err) {
@@ -73,9 +76,22 @@ app.post('/campgrounds', (req, res) => {
   });
 });
 
-// Redirects to the form page.
+// Redirects to the form page (NEW route).
 app.get('/campgrounds/new', (req, res) => {
   res.render('new');
+});
+
+// SHOW route.
+// Note that this needs to go after the NEW route due to pattern matching.
+app.get('/campgrounds/:id', (req, res) => {
+  // Find the campgroud with the provided ID
+  Campground.findById(req.params.id, (err, foundCampground) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render('show', { campground: foundCampground });
+    }
+  });
 });
 
 // Starts the servert on @PORT.

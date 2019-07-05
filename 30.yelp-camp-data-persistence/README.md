@@ -24,3 +24,14 @@
 ## Style the Navbar and Form
 * Add a navbar to all templates
 * Style the new campground form
+
+## RESTful Routes (note the table below is clearer when raw.)
+name    url        verb  desc.
+==========================================================
+INDEX   /dogs      GET   Display a list of dog
+NEW     /dogs/new  GET   Displays a form to make a new dog
+CREATE  /dogs      POST  Add new dog to database
+SHOW    /dogs/:id  GET   Show info about one dog
+
+note: you need at least two routes to send a post request.
+in this case: NEW and CREATE.
