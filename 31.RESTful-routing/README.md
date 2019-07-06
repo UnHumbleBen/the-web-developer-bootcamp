@@ -68,7 +68,7 @@ npm i express mongoose body-parser ejs`
 ```
 Create entry point file.
 ```
-`touch app.js`
+touch app.js
 ```
 Require dependencies.
 ```javascript
