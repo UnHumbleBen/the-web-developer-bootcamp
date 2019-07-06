@@ -22,16 +22,35 @@ const Blog = mongoose.model('Blog', blogSchema);
 
 // Sets the RESTful routes.
 
+// Redirects the root route to index.
 app.get('/', (req, res) => {
   res.redirect('/blogs');
 });
 
+// Handles the index route.
 app.get('/blogs', (req, res) => {
   Blog.find({}, (err, blogs) => {
     if (err) {
       console.log('Error!');
     } else {
       res.render('index', { blogs });
+    }
+  });
+});
+
+// Handles the new route.
+app.get('/blogs/new', (req, res) => {
+  res.render('new');
+});
+// Handles the create route.
+app.post('/blogs', (req, res) => {
+  // Creates the blog.
+  Blog.create(req.body.blog, (err) => {
+    if (err) {
+      res.render('new');
+    } else {
+      // Redirects to index.
+      res.redirect('/blogs');
     }
   });
 });
