@@ -206,3 +206,114 @@ Now when we run `PORT=8000 node app.js`, we see our first blog page!
 We will see how to add new blogs using the NEW and CREATE routes, but first,
 let's make our layout a tidier with Semantic UI.
 ## Layout
+Our blog is devoid of any style right now. Let's change that. We should add some
+a header and footer to our html. Then we can include Semantic UI to add a simple
+nav.
+### Adding Header and Footer Partials
+First, let's add our header and footer partials.
+Type this into the command line in your project directory
+to make create partial files.
+```
+mkdir views/partials
+touch views/partials/header.ejs
+touch views/partials/footer.ejs
+```
+In `header.ejs`,
+```js
+<html>
+  <head>
+    <title>Blog App</title>
+  </head>
+  <body>
+    <p>From the header file!</p>
+```
+In `footer.ejs`,
+```js
+    <p>From the footer file.</p>
+  </body>
+</html>
+```
+The paragraph tags are for testing purposes.
+We will remove them shortly. Now, let's include these partials into `index.ejs`.
+At the top of the file,
+```js
+<% include partials/header %>
+```
+At the bottom of the file,
+```js
+<% include partials/footer %>
+```
+When you run `PORT=8000 node app.js` and go to [`localhost:8000/](localhost:8000/), you should
+see the index page with those paragraphs at the top and bottom of the page.
+### Semantic UI
+To simplify things, we will use a [CDN](https://cdnjs.com/libraries/semantic-ui). Which we will
+include in our `header.ejs` file.
+```html
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+```
+Now when you run `port=8000 node app.js`, the font changes slightly.
+### Adding a Navbar
+The Semantic UI docs details how to make a [menu](https://semantic-ui.com/collections/menu.html).
+So, we add the following to our `header.ejs`, below the body tag
+```js
+    <div class="ui fixed inverted menu">
+      <div class="ui container">
+        <div class="header item"><i class="code icon"></i>Blog Site</div>
+        <a href="/" class="item">Home</a>
+        <a href="/blogs/new" class="item">New Post</a>
+      </div>
+    </div>
+```
+There is a lot going on here, all of which can be found in the docs.
+All UI defined elements have `ui` in their class name. In our code,
+the first two lines contains elements with `ui` as a class. This helps
+us distinguish which elements are distinguished UI elements, and what
+elements are part of a distinguished UI element. In our case,
+all elements with class `item` are part of the UI `menu` collection.
+The `fixed` and `inverted` classes are variations of the `menu`, which
+fixes our navbar to the top of the page and inverts the colors.
+We also added a UI `container` div to restrict the width of our menu.
+We have three `item` elements. The first one is our logo, so we give it
+two extra properties, [`header`](https://semantic-ui.com/collections/menu.html#header)
+to give it the bold font, and an [icon](https://semantic-ui.com/elements/icon.html).
+The last two elements are standard link tags. Phew, that was a lot to swallow.
+Now we have a navbar! Although, it is blocking the top part of our index page now.
+Let's fix that.
+### Adding Our Own Styles
+Let's make a new directory for our own stylesheet. In our project directory, run
+```
+mkdir public/
+mkdir public/stylesheets
+touch public/stylesheets/app.css
+```
+Then we can link to it in `header.ejs` by adding
+```html
+    <link rel="stylesheet" type="text/css" href="stylesheets/app.css">
+```
+You may be wondering why we wrote `stylesheets/app.css`
+instead of `public/stylesheets/app.css`.
+Recall that when we included the header and footer partials,
+we just specified relative paths from within the `views` directory
+since all the files were inside of `views`. Now, things are different
+because our style sheet is not inside of the `views` folder, but instead
+the `public` folder. How can we access it? Well, if you recall, in `app.js`
+we had this line.
+```js
+app.use(express.static('public'));
+```
+This line tells Express to serve up all files within the `public/` directory.
+In fact if you run `PORT=8000 node app.js` and go to your browser's developer tool
+to view `Sources`. You will see `stylesheets/` listed there, but not `public/`.
+In short, when we specify paths, we specify them relative to where there are
+served in the frontend, not backend. Now, let's continue by adding our
+own styles inside of our newly created `app.css`.
+```css
+i.icon {
+  font-size: 2em;
+}
+```
+This just makes the icon a bit bigger by doubling the font size. We will look
+at how to fix our navbar issue later. For now, let's add the NEW and CREATE
+routes so we can create new blog posts.
+### NEW and CREATE
+
