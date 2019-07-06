@@ -281,7 +281,7 @@ Now we have a navbar! Although, it is blocking the top part of our index page no
 Let's fix that.
 ### Adding Our Own Styles
 Let's make a new directory for our own stylesheet. In our project directory, run
-```
+```bash
 mkdir public/
 mkdir public/stylesheets
 touch public/stylesheets/app.css
@@ -315,5 +315,119 @@ i.icon {
 This just makes the icon a bit bigger by doubling the font size. We will look
 at how to fix our navbar issue later. For now, let's add the NEW and CREATE
 routes so we can create new blog posts.
-### NEW and CREATE
+## NEW and CREATE
+### NEW
+You may have noticed that we already included a link tag to make a new post above.
+We have a link tag in our menu to go to `/blogs/new`, but we do not have a handler
+for that request yet. Let's do that now. In app.js, add
+```js
+app.get('/blogs/new', (req, res) => {
+  res.render('new');
+});
+```
+Pretty straightforward. We just render the form page. Create that page with
+```
+touch views/new.ejs
+```
+and add
+```js
+<% include partials/header %>
+<div class="ui main text container segment">
+  <div class="ui huge header">New Blog</div>
+</div>
+<% include partials/footer %>
+```
+As usual, we wrap the file with the partials. Inside, we are using another
+element from UI Semantics. Here we are using a [text container](https://semantic-ui.com/elements/container.html#/definition),
+which wraps a single column of text to an appropriate width.
+We also use [segment](https://semantic-ui.com/elements/segment.html) to group the
+form elements together. We will see the use of `main` later.
+For our header, we use the [huge header](https://semantic-ui.com/elements/header.html) class.
 
+When you go to `/blogs/new`, something strange happens. The font size of
+our icon is no longer 2em. What is going on here?
+If you look in the developer console, you will notice a curious error.
+```console
+Refused to apply style from 'http://localhost:8000/blogs/stylesheets/app.css' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+```
+Notice how it's looking inside of the blogs directory? This is because `new.ejs`
+is inside of `blogs` in it's frontend path (`/blogs/new`). Why didn't we have this
+problem with the index page? Well, the index page was at `/blogs`, so its relative
+path to search is `/stylesheets/app.css`, which is correct. So how do we fix this problem
+for `/blogs/ejs`? How do we tell the browser to look for the stylesheet from the root?
+Let's look at how we linked our stylesheet in `header.ejs`.
+```html
+    <link rel="stylesheet" type="text/css" href="stylesheets/app.css">
+```
+Adding a slash to the front of the path fixes it.
+```html
+    <link rel="stylesheet" type="text/css" href="/stylesheets/app.css">
+```
+Great! Now we can finally fix our annoying menu problem. We want to move the navbar up so
+that it does not block our container element. How do we move the container element down?
+We can add some margin to the top in our `app.css`.
+```css
+.container {
+  margin-top: 7.0em;
+}
+```
+But remember we also but a container inside of the menu? So we want to be more specific.
+```css
+.container.main {
+  margin-top: 7.0em;
+}
+```
+Now we can add a form to `new.ejs`,
+```html
+  <form action="/blogs" method="POST">
+    <input type="text" name="blog[title]" placeholder="title">
+    <input type="text" name="blog[image]" placeholder="image">
+    <input type="text" name="blog[body]" placeholder="body">
+    <input type="submit">
+  </form>
+```
+And with that, we are finished with the new route;
+however, it does not work without the create route.
+### CREATE
+You may be wondering, how come we named our input tags with `blog[field_name]`
+rather than just `field_name`. The answer is that it tells
+body-parser to store all those fields under the `blog` object, which we
+can access with `req.body.blog`, much more concise than having to destructure
+each one of the field_names seperately. Let's see it in action in `app.js`,
+```js
+app.post('/blogs', (req, res) => {
+  // Creates the blog.
+  Blog.create(req.body.blog, (err) => {
+    if (err) {
+      res.render('new');
+    } else {
+      // Redirects to index.
+      res.redirect('/blogs');
+    }
+  });
+});
+```
+Now, when you enter a new post into the form, it should redirect to index
+and you should see the new post.
+### UI Form
+We can now add some UI Semantic to our form using the [form collection](https://semantic-ui.com/collections/form.html).
+We can rewrite the form in `new.ejs`.
+```html
+  <form class="ui form" action="/blogs" method="POST">
+    <div class="field">
+      <label>Title</label>
+      <input type="text" name="blog[title]" placeholder="title">
+    </div>
+    <div class="field">
+      <label>Image</label>
+      <input type="text" name="blog[image]" placeholder="image">
+    </div>
+    <div class="field">
+      <label>Body</label>
+      <textarea name="blog[body]"></textarea>
+    </div>
+    <button class="ui violet basic button" type="submit">Submit</button>
+  </form>
+```
+Essentially, follow the first template in the form collection,
+but we added our own [basic button](https://semantic-ui.com/elements/button.html).
