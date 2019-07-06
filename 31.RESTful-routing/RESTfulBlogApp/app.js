@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const express = require('express');
 
 const app = express();
@@ -21,7 +22,20 @@ const Blog = mongoose.model('Blog', blogSchema);
 
 // Sets the RESTful routes.
 
+app.get('/', (req, res) => {
+  res.redirect('/blogs');
+});
+
+app.get('/blogs', (req, res) => {
+  Blog.find({}, (err, blogs) => {
+    if (err) {
+      console.log('Error!');
+    } else {
+      res.render('index', { blogs });
+    }
+  });
+});
+
 app.listen(process.env.PORT, process.env.IP, () => {
-  // eslint-disable-next-line no-console
   console.log('Server is running!');
 });

@@ -53,7 +53,7 @@
   * Yet, they are still different because of their HTTP verb.
 
 # RESTful Blog App
-* We will be using a new framework called Samantic UI https://semantic-ui.com/
+* We will be using a new framework called [Semantic UI](https://semantic-ui.com/)
 * We will use Express. REST is really the bread and butter of Express.
 ## Setup
 Make a new directory for the app.
@@ -113,5 +113,96 @@ const blogSchema = new mongoose.Schema({
 });
 const Blog = mongoose.model('Blog', blogSchema);
 ```
-And now we are all set! We can start making routes now!
+Let's just check to make sure that we setup MongoDB correctly by making a test blog post.
+```javascript
+Blog.create({
+  title: 'Test Blog',
+  image: '<random image url>',
+  body: 'Hello! This is a blog post!',
+});
+```
+Now run the app! If everything was setup properly we should be able to see the dog in our database. So run `mongo`
+```
+> show dbs
+> use restful_blog_app
+> db.blogs.find()
+```
+Should output the following...
+```
+{ "_id" : ObjectId("<random id>"), "title" : "Test Blog", "image" : "<random image url>", "body" : "Hello! This is a blog post!", "created" : ISODate("2019-07-06T05:07:16.631Z"), "__v" : 0 }
+```
+Now that we are confident that we setup our database correctly, we can delete the ```Blog.create ...``` from our code.
+Now we are all set! We can start making routes now!
 ## INDEX
+This is the route where we show all our blog posts.
+Recall that REST conventions dictates that this
+route should be a `GET` request to `/blogs`.
+We can handle that request with the following.
+```javascript
+app.get('/blogs', (req, res) => {
+  res.render('index');
+});
+```
+But what is `'index'`? Recall that our view engine was set to `ejs`.
+This means we need to create a template file in `views` (the default directory Express looks in)
+called `index.ejs`.
+```
+mkdir views
+touch views/index.ejs
+```
+and let's just add a simple template into this file to test
+that our INDEX route is connected properly.
+```html
+<h1>Index Page!</h1>
+```
+Start up our server again with
+```
+PORT=8000 node app.js
+```
+Now, if you go to [localhost:8000/blogs](localhost:8000/blogs),
+you should see that header tag.
+Notice that we don't get a response with [localhost:8000/](locahost:8000/)
+That is a bit annoying. By convention most webpages, such as Facebook and Reddit
+have the root redirect to the index page. We can do that by adding this to `app.js`.
+```javascript
+app.get('/', (req, res) => {
+  res.redirect('/blogs');
+});
+```
+Now if we start up the server with ```PORT=8000 node app.js```,
+[localhost:8000/](locahost:8000/) takes to our index page. Great!
+Now we can add the functionality for our index page.
+We need to query the database for all the blogs and then pass it in
+to our `index.ejs` template so we can display them all.
+So, let's rewrite out request handle for `/blogs`.
+```javascript
+app.get('/blogs', (req, res) => {
+  Blog.find({}, (err, blogs) => {
+    if (err) {
+      console.log('Error!');
+    } else {
+      res.render('index', { blogs });
+    }
+  });
+});
+```
+Notice that we call `Blog.find()`, to find all the blogs, which we can than
+use in the call back function to pass it in to the template file with
+```javascript
+res.render('index', { blogs });
+```
+In the template file, `views/index.ejs`, we write
+```js
+<% blogs.forEach(function(blog) { %>
+  <div>
+    <h2><%=blog.title%></h2>
+    <img src="<%= blog.image %>">
+    <span><%= blog.created %></span>
+    <p><%= blog.body %></p>
+  </div>
+<% }) %>
+```
+Now when we run `PORT=8000 node app.js`, we see our first blog page!
+We will see how to add new blogs using the NEW and CREATE routes, but first,
+let's make our layout a tidier with Semantic UI.
+## Layout
