@@ -431,3 +431,78 @@ We can rewrite the form in `new.ejs`.
 ```
 Essentially, follow the first template in the form collection,
 but we added our own [basic button](https://semantic-ui.com/elements/button.html).
+## SHOW
+Usually, the CREATE route redirects to the SHOW route, not the INDEX, so let's create it.
+### Adding Links to the Show Page
+Firstly, the index plage should have a link to the SHOW page under each dog. So in `index.ejs`,
+underneathe the paragraph tag, we add
+```js
+    <a href="/blogs/<%= blog._id %>">Read More</a>
+```
+### Adding the SHOW Route
+We can handle this request in `app.js` by adding a handler
+```js
+app.get('/blogs/:id', (req, res) => {
+  Blog.findById(req.params.id, (err, foundBlog) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.render('show', { blog: foundBlog });
+    }
+  });
+});
+```
+Use `req.params.id` to parse the id and query the database.
+We then pass the database entry we queried into the show template as `blog`.
+Now we need to create that template.
+```bash
+touch views/show.ejs
+```
+### Styling
+Here's the gist of it.
+```js
+<% include partials/header %>
+<div class="ui main text container segment">
+  <div class="ui items">
+    <div class="item">
+      <div class="image">
+        <img class="ui centered rounded image" src="<%= blog.image %>">
+      </div>
+      <div class="content">
+        <div class="header"><%= blog.title %></div>
+        <div class="meta">
+          <span><%= blog.created.toDateString() %></span>
+        </div>
+        <div class="description">
+          <p><%= blog.body %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% include partials/footer %>
+```
+Let's break this down. As usual we include the partials at the top and bottom.
+We have seen this `ui main text container segment` class used before in the form.
+Likewise, we have seen `ui huge header` earlier also, only this time, the header is
+`blog.title`. We use the [`items`](https://semantic-ui.com/views/item.html) class for
+displaying collections of content, which in this case is the blog contents.
+We use [`image`](https://semantic-ui.com/elements/image.html) class for styling the image.
+
+Slight aside, we can give the user the option to input html into their post by changing
+one character in our `show.ejs`.
+```js
+          <p><%- blog.body %></p>
+```
+Did you catch it? We changed the `=` to a `-`, which outputs the raw, or unescaped
+version of the text. Great! The user can add HTML to style of their posts.
+They might also be able to run scripts on your site now also... careful! We will
+come back to input scantization later.
+
+You may have noticed that our index page shows everything inside the blog already.
+This is problematic for long posts, we only want to only see part of the body.
+This is a pretty simple fix, we can use the JavaScript substring function.
+Replacing the body paragraph tag in `index.ejs` with
+```js
+    <p><%= blog.body.substring(0, 100) %> . . .</p>
+```

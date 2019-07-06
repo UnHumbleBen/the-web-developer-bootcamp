@@ -54,6 +54,16 @@ app.post('/blogs', (req, res) => {
     }
   });
 });
+// Handles the show route.
+app.get('/blogs/:id', (req, res) => {
+  Blog.findById(req.params.id, (err, foundBlog) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.render('show', { blog: foundBlog });
+    }
+  });
+});
 
 app.listen(process.env.PORT, process.env.IP, () => {
   console.log('Server is running!');
