@@ -637,3 +637,108 @@ Add this to `show.ejs`
       </div>
     <!--  -->
 ```
+
+## Sanitizing Inputs
+We will install a package called [express-sanitizer](https://www.npmjs.com/package/express-sanitizer)
+```bash
+npm i express-sanitizer
+```
+Include this package in `app.js`
+```js
+const expressSanitizer = require('express-sanitizer');
+// bodyParser must be mounted before expressSanitzier.
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(expressSanitizer());
+// ... routes below ...
+```
+`expressSanitizer` needs to be mounted below `bodyParser()` and above the routes.
+Then, in the UPDATE and CREATE routes, add this line before adding the request body to the database,
+```js
+  req.body.blog.body = req.sanitize(req.body.blog.body);
+```
+And that is all there is to it. Note, `bodyParser` and `expressSanitizer` are both examples of
+middleware. The concept of middleware allows us to do input sanitization a bit earlier without repeating
+the same line of code into two seperate routes. We will study this in detail later.
+
+## Styling the Index
+Let's restyle the index page by rewriting `index.ejs`
+```js
+<% include partials/header %>
+<div class="ui main text container">
+  <div class="ui huge header">RESTful Blog App</div>
+  <div class="ui top attached segment">
+    <div class="ui divided items">
+      <% blogs.forEach(function(blog) { %>
+        <div class="item">
+          <div class="image">
+            <img src="<%= blog.image %>">
+          </div>
+          <div class="content">
+            <a class="header" href="/blogs/<%= blog._id %>">
+              <%= blog.title %>
+            </a>
+            <div class="meta">
+              <span><%= blog.created.toDateString() %></span>
+            </div>
+            <div class="description">
+              <p><%= blog.body.substring(0, 100) %> . . .</p>
+            </div>
+            <div class="extra">
+              <a class="ui floated basic violet button" href="/blogs/<%= blog._id %>">
+                Read More
+                <i class="right chevron icon"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+<% include partials/footer %>
+```
+Just a marathon of Semantic UI elements inside of the item collection. Don't worry too much about 
+memorizing all of this. And with that, we are done with our app. Congratulations!
+
+
+# Update REST Table
+Remember the list of REST routes we had at the very beginning? Let's update that list by adding
+the Mongoose methods we called for each route.
+* RESTful routes Path, HTTP Verb, Purpose, and Mongoose method.
+  * INDEX   
+    * /blogs
+    * GET
+    * Shows all the blogs.
+    * Blogs.find()
+  * NEW     
+    * /blogs/new
+    * GET
+    * Shows a form to add a blog.
+    * n/a
+  * CREATE
+    * /blogs
+    * POST
+    * Creates a new blog and redirects somewhere.
+    * Blogs.create()
+  * SHOW
+    * /blogs/:id
+    * GET
+    * Shows one specific blog.
+    * Blogs.findById()
+  * Edit
+    * /blogs/:id/edit
+    * GET
+    * Shows the edit form for a blog.
+    * Blogs.findById()
+  * UPDATE
+    * /blogs/:id
+    * PUT
+    * Updates a blog post, and then redirects somewhere.
+    * Blogs.findByIdAndUpdate()
+  * DESTROY
+    * /blogs/:id
+    * DELETE
+    * Deletes a blog post, and then redirects somewhere.
+    * Blogs.findByIdAndRemove()
+
+Phew! That was a long one. Let's move on to Associations!
