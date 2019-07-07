@@ -506,3 +506,95 @@ Replacing the body paragraph tag in `index.ejs` with
 ```js
     <p><%= blog.body.substring(0, 100) %> . . .</p>
 ```
+## EDIT and UPDATE
+Very similar to NEW and CREATE.
+### Add Edit Route
+In `app.js` add
+```js
+app.get('/blogs/:id/edit', (req, res) => {
+  Blog.findById(req.params.id, (err, foundBlog) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.render('edit', { blog: foundBlog });
+    }
+  });
+});
+```
+This route queries the database with the id and passes the queried blog
+to the template.
+### Add Edit Form
+Make a new file called `views/edit.ejs` by copying `views/new.ejs`.
+We are using the new form as a template and making some changes.
+```bash
+cp views/new.ejs views/edit.ejs
+```
+First, let's replace our placeholders by inserting what the blog's fields were.
+```html
+  <!--  -->
+  <div class="ui huge header">Edit <%= blog.title %></div>
+  <!--  -->
+      <input type="text" name="blog[title]" value="<%= blog.title %>" required>
+  <!--  -->
+      <input type="text" name="blog[image]" value="<%= blog.image %>" required>
+  <!--  -->
+      <textarea name="blog[body]" required><%= blog.body %></textarea>
+  <!--  -->
+```
+Rewriting the `value` fields preloads the blogs' title and image url onto the form.
+`textarea` works similarly by putting the body into the inner HTML.
+
+Our submit button still goes to the CREATE route however, so we need to change that.
+```html
+  <form class="ui form" action="/blogs/<%= blog._id %>" method="PUT">
+```
+Except... this doesn't work. Forms do not accept PUT requests unfortunately.
+They default to GET requests. Why?
+Let's leave that discussion for [somewhere else](https://softwareengineering.stackexchange.com/questions/114156/why-are-there-are-no-put-and-delete-methods-on-html-forms).
+How do we get around this? We will use [method-override](https://www.npmjs.com/package/method-override).
+### Add Method-Override
+Install method-override.
+```bash
+npm i method-override
+```
+Include it in `app.js`.
+```js
+const methodOverride = require('method-override');
+// ....
+app.use(methodOverride('_method'));
+```
+This tells the middleware function to take the argument of the query string `"_method"` and override
+the method with the argument.
+
+In `edit.ejs` change the form tag.
+```html
+  <form class="ui form" action="/blogs/<%= blog._id %>?_method=PUT" method="POST">
+```
+We added the query string `"_method=PUT"` which the method-override middleware will signal the middleware
+to override the POST request as a PUT request.
+
+Now we need to handle this request.
+### Add Update Route
+In `app.js` add
+```js
+app.put('/blogs/:id', (req, res) => {
+  Blog.findByIdAndUpdate(req.params.id, req.body.blog, (err) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.redirect(`/blogs/${req.params.id}`);
+    }
+  });
+});
+```
+Here we are using a new method called `findByIdAndUpdate()`, which is actually deprecated,
+so we need to update our options when we connect the to MongoDB by setting the option
+`useFindAndModify` to `false`.
+```js
+mongoose.connect('mongodb://localhost:27017/restful_blog_app', { useNewUrlParser: true, useFindAndModify: false });
+```
+Looking back at the update route, `findByIdAndUpdate()` finds the blog post via the id
+and replaces it with `req.body.blog` which contains the new blog object.
+Great! Now when we update the blog, it really updates! Just one more route to go, hang in there!
+
+## DELETE
