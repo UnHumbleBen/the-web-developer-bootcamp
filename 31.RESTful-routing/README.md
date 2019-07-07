@@ -597,4 +597,43 @@ Looking back at the update route, `findByIdAndUpdate()` finds the blog post via 
 and replaces it with `req.body.blog` which contains the new blog object.
 Great! Now when we update the blog, it really updates! Just one more route to go, hang in there!
 
-## DELETE
+## DESTROY
+Let's add a button inside of `show.ejs` for delete.
+```html
+    <div class="item">
+    <!--  -->
+      <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST">
+        <button class="ui red basic button">Delete</button>
+      </form>
+    </div>
+```
+Again, we are using the method-override middleware by passing in the query string,
+`"?_method=DELETE"` and sending a `POST` request.
+
+Now we added the Destory route handler in `app.js`.
+```js
+app.delete('/blogs/:id/', (req, res) => {
+  // Destroys the blog.
+  Blog.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.redirect('/blogs');
+    }
+  });
+});
+```
+Seems like a simpler version of Update, huh? And that is it! We have completed all the
+RESTful routes.
+
+## Where is Our Edit Button?
+We do not have a nice way to edit a blog right now, so let's add a button.
+Add this to `show.ejs`
+```html
+    <div class="item">
+    <!--  -->
+      <div>
+        <a class="ui orange basic button" href="/blogs/<%= blog._id %>/edit">Edit</a>
+      </div>
+    <!--  -->
+```

@@ -87,6 +87,17 @@ app.put('/blogs/:id', (req, res) => {
     }
   });
 });
+// Destroy route.
+app.delete('/blogs/:id/', (req, res) => {
+  // Destroys the blog.
+  Blog.findByIdAndRemove(req.params.id, (err) => {
+    if (err) {
+      res.redirect('/blogs');
+    } else {
+      res.redirect('/blogs');
+    }
+  });
+});
 
 app.listen(process.env.PORT, process.env.IP, () => {
   console.log('Server is running!');
