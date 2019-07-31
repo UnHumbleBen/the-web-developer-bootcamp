@@ -16,6 +16,7 @@ There are three main types of associations.
 * One-to-One
 * One-to-Many
 * Many-to-Many
+
 Let's consider an example of each one of these.
 ### One-to-One
 Every book has one publisher.
@@ -201,3 +202,237 @@ to avoid duplicates before running `node embded.js`
 ```
 And there you have it, one user with multiple posts.
 Next, we will look at Object References.
+
+
+## Referencing Data
+We learned how to use embeded documents in the previous
+section. Now we will learn another way to associate data using
+[object references](https://docs.mongodb.com/manual/core/data-model-design/#data-modeling-referencing).
+Let's copy `embeded.js` to a new file called `reference.js`.
+```bash
+cp embeded.js reference.js
+```
+We only need the schemas we defined previously, so delete all the
+lines after we define `User` schema. The file should now look like
+this.
+
+Filename: references.js
+```js
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/blog_demo', { useNewUrlParser: true });
+
+// Defines post schema.
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+});
+const Post = mongoose.model('Post', postSchema);
+
+// Defines user schema.
+const userSchema = new mongoose.Schema({
+  email: String,
+  name: String,
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+    },
+  ],
+});
+const User = mongoose.model('User', userSchema);
+
+```
+To avoid overriding what we have already accomplished in the
+previous section, we will write into a different database.
+We can simply change the url mongoose connects to from
+`mongodb://localhost/blog_demo` to `mongodb://localhost/blog_demo_2`
+
+Filename: references.js
+```js
+mongoose.connect('mongodb://localhost/blog_demo_2', { useNewUrlParser: true });
+```
+
+### Using References to Add Posts to a User
+Previously, we created an array of posts for each user.
+Now, we will stil use an array, but instead of an array of post,
+we use an array of ids of other posts. Let's see this in action.
+
+We changed the `posts` attribute from an array of `PostSchema`, to
+an array of objects. The object has two properties, `type` and `ref`. The `type` is an `ObjectId` and `ref` is `"Post"`, indicating
+that the object is a reference to a `Post` using the `Post`'s
+`ObjectId`
+
+Let's quickly check that this new Schema is working by adding
+a user.
+
+Filename: references.js
+```js
+// --snip--
+
+User.create({
+  email: 'bob@gmail.com',
+  name: 'Bob Belcher',
+});
+```
+
+Running `node references.js` should add this new user to the data
+base `blog_demo_2`. Let's verify that. Run `mongo` in the command
+line and enter these two commands. You should get something like.
+
+```console
+> use blog_demo_2
+switched to db blog_demo_2
+> db.users.find()
+{ "_id" : ObjectId(<random object id>), "posts" : [ ], "email" : "bob@gmail.com", "name" : "Bob Belcher", "__v" : 0 }
+```
+
+Now comment out the code above where we created this user,
+so that we don't create this document when we run the program again.
+Let's now create a new post.
+
+Filename: references.js
+```js
+// --snip--
+
+Post.create({
+  title: 'How to cook the best burger',
+  content: 'blah blah blah blah blah',
+}, (err, post) => {
+  console.log(post);
+});
+
+// User.create({
+//   email: 'bob@gmail.com',
+//   name: 'Bob Belcher',
+// });
+```
+
+Very similar to how we created `User`, but this time, we added an
+callback which logs the `post` to the console.
+
+Running `node reference.js` should output:
+
+```console
+{
+  _id: <random object id>,
+  title: 'How to cook the best burger',
+  content: 'blah blah blah blah blah',
+  __v: 0
+}
+```
+
+This post has it's own `_id` different from Bob.
+
+Again, we should comment out or delete the code for creating the
+post to avoid duplication. In this case, we modify the code
+because we will add another post, only this time we will actually
+save it to the user.
+
+Filename: references.js
+```js
+// --snip--
+
+Post.create({
+  title: 'How to cook the best burger pt. 2',
+  content: 'blah blah blah blah blah',
+}, (err, post) => {
+  User.findOne({ email: 'bob@gmail.com' }, (_err, foundUser) => {
+    if (_err) {
+      console.log(err);
+    } else {
+      foundUser.posts.push(post);
+      foundUser.save((__err, data) => {
+        if (__err) {
+          console.log(err);
+        } else {
+          console.log(data);
+        }
+      });
+    }
+  });
+});
+```
+
+We added `'pt. 2'` to the `title`. Then we add a callback which
+queries for Bob, our user we created earlier. When it finds Bob,
+it pushes the newly created post to the `posts` field of Bob.
+Then it `save` this change to the database. Lastly, we have a
+callback to log the new document for Bob. Running
+`node reference.js` now outputs
+
+```console
+{
+  posts: [ <post object id> ],
+  _id: <user object id>,
+  email: 'bob@gmail.com',
+  name: 'Bob Belcher',
+  __v: 1
+}
+```
+
+In more recent versions of mongoose, the output may include the
+entire post object, rather than just the id.
+
+```console
+{
+  posts: [
+    {
+      _id: <post object id>,
+      title: 'How to cook the best burger pt. 2',
+      content: 'blah blah blah blah blah',
+      __v: 0
+    }
+  ],
+  _id: <user object id>,
+  email: 'bob@gmail.com',
+  name: 'Bob Belcher',
+  __v: 1
+}
+```
+
+After adding another object, the console should only
+show the object id's. Let's add one more. Again we rewrite the
+code above.
+
+Filename: references.js
+```js
+// --snip--
+
+Post.create({
+  title: 'How to cook the best burger pt. 3',
+  content: 'gibberish stuff for part 3',
+}, (err, post) => {
+  User.findOne({ email: 'bob@gmail.com' }, (_err, foundUser) => {
+    if (_err) {
+      console.log(err);
+    } else {
+      foundUser.posts.push(post);
+      foundUser.save((__err, data) => {
+        if (__err) {
+          console.log(err);
+        } else {
+          console.log(data);
+        }
+      });
+    }
+  });
+});
+```
+
+Now, when we run `node references.js`, we see,
+
+```console
+{
+  posts: [ <post 2 id>, <post 3 id> ],
+  _id: <user id>,
+  email: 'bob@gmail.com',
+  name: 'Bob Belcher',
+  __v: 2
+}
+```
+
+Now, we can comment out the post creation code. Okay, we can
+add references to posts, but how do we actually access them?
+
+### Finding Posts
