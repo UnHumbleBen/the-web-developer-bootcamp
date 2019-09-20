@@ -1,0 +1,30 @@
+{
+  "name": "authdemo",
+  "version": "1.0.0",
+  "description": "A short demo of sessions",
+  "repository": {
+    "name": "none",
+    "url": "none"
+  },
+  "main": "app.js",
+  "scripts": {
+    "test": "PORT=8000 nodemon app.js"
+  },
+  "author": "Ben",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "mongoose": "^5.7.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^5.0.1"
+  },
+  "devDependencies": {
+    "eslint": "5.16.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2"
+  }
+}
